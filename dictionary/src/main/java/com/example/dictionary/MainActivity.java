@@ -1,30 +1,21 @@
 package com.example.dictionary;
 
-import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     final static String TAG = "myLogs";
@@ -72,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     if(line.isEmpty())
                         continue;
-                    word = line.toString();
+                    word = line;
                     firstLine = false;
                 }
                 else
@@ -100,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     void addWord(SQLiteDatabase db, String word, String desc) {
         ContentValues cv = new ContentValues();
         cv.put("word", word);
-        cv.put("desc", desc.toString());
+        cv.put("desc", desc);
         db.insert("mytable", null, cv);
     }
 
@@ -134,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
                 desc = c.getString(0);
                 tvDescription.setText("");
+                c.close();
                 db.close();
                 break;
         }
@@ -188,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast toast;
                 toast = Toast.makeText(this, String.valueOf(c.getCount()), Toast.LENGTH_SHORT);
                 toast.show();
+                c.close();
                 db.close();
                 break;
             case 3:
@@ -195,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
                 builder.setTitle("Enter new description:");
                 input = new EditText(this);
                 input.setText(desc);
-                //input.setMaxLines(10);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -223,9 +214,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class DBHelper extends SQLiteOpenHelper {
+    private class DBHelper extends SQLiteOpenHelper {
 
-        public DBHelper(Context context) {
+        DBHelper(Context context) {
             // конструктор суперкласса
             super(context, "myDB", null, 1);
         }
